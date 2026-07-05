@@ -116,7 +116,7 @@ repository:
 
 -   Repository:
     https://github.com/`<your-username>`{=html}/skill-gap-analysis-agent
--   Live Demo: https://`<your-demo-url>`{=html}
+-   Live Demo: https://6a4a00c22ab2c1ea704bba63--subtle-melomakarona-8f71c1.netlify.app/
 -   Documentation:
     https://github.com/`<your-username>`{=html}/skill-gap-analysis-agent/wiki
 -   Issues:
