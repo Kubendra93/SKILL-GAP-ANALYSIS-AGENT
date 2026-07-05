@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Placement Skill Gap Analysis Agent</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Evaluate technical knowledge, communication skills, aptitude, and overall job readiness. Get personalized learning roadmaps and placement analysis.">
+  <meta name="keywords" content="placement preparation, skill gap analysis, college placements, resume analysis, study roadmap">
+  <meta name="author" content="Placement Skill Gap Agent Team">
+  
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Third-party libraries (Chart.js and html2pdf.js) via CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <!-- Application Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div id="app-container">
+    <!-- Header Navigation -->
+    <header>
+      <div class="logo-container">
+        <div class="logo-icon">AG</div>
+        <div class="logo-text">
+          <h1>PrepMentor AI</h1>
+          <span>Skill Gap & Placement Advisor</span>
+        </div>
+      </div>
+      
+      <div class="nav-actions">
+        <!-- Dark Mode Toggle -->
+        <button id="theme-toggle" class="btn-icon" aria-label="Toggle Theme">
+          <i class="fas fa-moon"></i>
+        </button>
+        
+        <!-- Active User Badge -->
+        <div id="header-user-section" class="user-badge" style="display: none;">
+          <div class="avatar">U</div>
+          <span class="user-name">User</span>
+        </div>
+        
+        <!-- Admin Dashboard Switcher -->
+        <button id="admin-toggle-btn" class="btn btn-secondary" style="display: none;">
+          Admin Panel
+        </button>
+        
+        <!-- Logout Button -->
+        <button id="logout-btn" class="btn btn-secondary" style="display: none;">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main>
+
+      <!-- VIEW 1: AUTHENTICATION / LOGIN & SIGN-UP -->
+      <section id="login-view" class="view-panel active">
+        <div class="card-container">
+          
+          <!-- SIGN IN CARD -->
+          <div id="login-card" class="card">
+            <div class="card-title-area">
+              <h2>Welcome Back</h2>
+              <p>Sign in with your registered email to view your dashboard</p>
+            </div>
+            
+            <div id="login-error" class="validation-message" style="margin-bottom: 1rem; text-align: center; font-weight: 600;"></div>
+            
+            <form id="login-form">
+              <div class="form-group">
+                <label for="login-email">Email Address</label>
+                <input type="email" id="login-email" placeholder="student@college.edu or admin@placement.com" required>
+              </div>
+              
+              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                Sign In
+              </button>
+              
+              <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-secondary);">
+                Don't have an account? <a href="#" id="go-to-signup" style="color: var(--accent-color); font-weight: 600; text-decoration: none;">Register here</a>
+              </p>
+            </form>
+          </div>
+
+          <!-- SIGN UP CARD (REGISTRATION) -->
+          <div id="signup-card" class="card large-card" style="display: none;">
+            <div class="card-title-area">
+              <h2>Student Registration</h2>
+              <p>Set up your profile to start your personalized skill assessment</p>
+            </div>
+            
+            <form id="reg-form">
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="reg-name">Full Name *</label>
+                  <input type="text" id="reg-name" placeholder="John Doe">
+                  <div id="err-name" class="validation-message">Name must be at least 3 characters.</div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="reg-email">Email Address *</label>
+                  <input type="email" id="reg-email" placeholder="john.doe@college.edu">
+                  <div id="err-email" class="validation-message">Please enter a valid email address.</div>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="reg-phone">Mobile Number *</label>
+                  <input type="tel" id="reg-phone" placeholder="9876543210">
+                  <div id="err-phone" class="validation-message">Please enter a valid 10-digit phone number.</div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="reg-college">College Name *</label>
+                  <input type="text" id="reg-college" placeholder="National Institute of Technology">
+                  <div id="err-college" class="validation-message">Please enter a valid college name.</div>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="reg-branch">Department / Branch *</label>
+                  <select id="reg-branch">
+                    <option value="Computer Science">Computer Science & Engineering</option>
+                    <option value="Mechanical">Mechanical Engineering</option>
+                    <option value="Civil">Civil Engineering</option>
+                    <option value="Electrical">Electrical Engineering</option>
+                    <option value="Electronics">Electronics & Communication</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="reg-year">Year of Study *</label>
+                  <select id="reg-year">
+                    <option value="1">First Year</option>
+                    <option value="2">Second Year</option>
+                    <option value="3">Third Year</option>
+                    <option value="4">Final Year</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="form-group">
+                  <label for="reg-cgpa">Current CGPA *</label>
+                  <input type="text" id="reg-cgpa" placeholder="8.5">
+                  <div id="err-cgpa" class="validation-message">Please enter a valid CGPA between 0.0 and 10.0.</div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="reg-dream-company">Dream Company *</label>
+                  <input type="text" id="reg-dream-company" placeholder="e.g. Google, Microsoft, L&T">
+                  <div id="err-dream-company" class="validation-message">Please enter your dream company.</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-skills">Current Technical Skills * (Comma-separated)</label>
+                <input type="text" id="reg-skills" placeholder="Java, HTML, Data Structures">
+                <div id="err-skills" class="validation-message">Please enter at least one skill.</div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-languages">Programming Languages Known * (Comma-separated)</label>
+                <input type="text" id="reg-languages" placeholder="Python, C++, Javascript">
+                <div id="err-languages" class="validation-message">Please enter languages known.</div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-goal">Career Goal / Preferred Role *</label>
+                <input type="text" id="reg-goal" placeholder="e.g. Software Engineer, VLSI Design Engineer">
+                <div id="err-goal" class="validation-message">Please fill in your career target.</div>
+              </div>
+
+              <div class="form-group">
+                <label>Upload Resume (Optional)</label>
+                <div class="file-upload-wrapper">
+                  <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--accent-color);"></i>
+                  <p style="margin-top: 0.5rem; font-weight: 600;">Drag and drop or click to upload PDF</p>
+                  <p style="font-size: 0.75rem; color: var(--text-muted);">Max file size: 5MB</p>
+                  <input type="file" id="reg-resume" accept=".pdf">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem; padding: 0.85rem;">
+                Proceed to Career Path Selection
+              </button>
+              
+              <p style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text-secondary);">
+                Already have an account? <a href="#" id="go-to-login" style="color: var(--accent-color); font-weight: 600; text-decoration: none;">Sign in here</a>
+              </p>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 2: CAREER PATH SELECTION -->
+      <section id="career-selection-view" class="view-panel">
+        <div class="career-container">
+          <h2>Select Your Career Direction</h2>
+          <p style="color: var(--text-secondary); max-width: 600px; margin-top: 0.5rem;">
+            Your placement assessment questions and preparation roadmap will adjust dynamically to align with industry expectations for your chosen category.
+          </p>
+          
+          <div class="selection-cards">
+            <!-- Option 1: IT Companies -->
+            <div class="selection-card tech-card" onclick="selectCareerPath('it')">
+              <div class="icon-holder">
+                <i class="fas fa-laptop-code"></i>
+              </div>
+              <h3>IT & Software</h3>
+              <p>Focuses on programming languages, data structures, algorithms, databases (SQL), operating systems, and computer networks. Best suited for software engineer and system developer positions.</p>
+              <button class="btn btn-primary" style="width: 100%;">Select IT Domain</button>
+            </div>
+
+            <!-- Option 2: Core Engineering -->
+            <div class="selection-card core-card" onclick="selectCareerPath('core')">
+              <div class="icon-holder">
+                <i class="fas fa-cogs"></i>
+              </div>
+              <h3>Core Engineering</h3>
+              <p>Focuses on specialized topics aligned with your engineering branch (Mechanical, Civil, Electrical, or Electronics) along with technical math and system engineering principles.</p>
+              <button class="btn btn-primary" style="width: 100%; background-color: #ec4899; box-shadow: 0 4px 6px -1px rgba(236, 72, 153, 0.2);">Select Core Domain</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 3: MCQ ASSESSMENT ENGINE -->
+      <section id="assessment-view" class="view-panel">
+        <div class="assessment-container">
+          
+          <!-- Assessment Metadata Bar -->
+          <div class="assessment-meta">
+            <div>
+              <span style="font-weight: 700; color: var(--text-secondary);">Question</span>
+              <span id="current-question-num" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-color);">1</span>
+              <span style="color: var(--text-muted);">/</span>
+              <span id="total-questions-num" style="font-weight: 600; color: var(--text-secondary);">10</span>
+            </div>
+            
+            <div id="assessment-timer" class="timer-box">
+              <i class="far fa-clock"></i>
+              <span id="timer-countdown">10:00</span>
+            </div>
+          </div>
+
+          <!-- Linear progress bar -->
+          <div class="progress-container">
+            <div id="assessment-progress-bar" class="progress-bar"></div>
+          </div>
+
+          <!-- Question Card -->
+          <div class="question-card">
+            <div>
+              <span id="q-tag" class="q-tag tech">Technical</span>
+              <span id="q-diff" class="q-diff">Difficulty: Medium</span>
+            </div>
+            
+            <p id="question-text" class="question-text">
+              Loading assessment question...
+            </p>
+
+            <div id="options-list" class="options-list">
+              <!-- Dynamically populated options buttons go here -->
+            </div>
+          </div>
+
+          <!-- Navigation controls -->
+          <div class="navigation-actions">
+            <button id="prev-q-btn" class="btn btn-secondary" onclick="prevQuestion()">
+              <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button id="next-q-btn" class="btn btn-primary" onclick="nextQuestion()">
+              Next Question <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 4: STUDENT RESULTS & INSIGHTS DASHBOARD -->
+      <section id="dashboard-view" class="view-panel">
+        
+        <!-- Top Title Bar -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem;">
+          <div>
+            <h2 id="dash-student-name">Student Dashboard</h2>
+            <p id="dash-student-meta" style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">Computer Science & Engineering | Year 4 | CGPA: 8.5</p>
+            <p id="dash-career-goal" style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600;">Career Goal: IT | Dream Company: Google</p>
+          </div>
+          
+          <div>
+            <button onclick="downloadReport()" class="btn btn-primary">
+              <i class="fas fa-download"></i> Download Report (PDF)
+            </button>
+          </div>
+        </div>
+
+        <!-- Target print container wrapping the whole report -->
+        <div id="report-pdf-target">
+          
+          <!-- Page 1: Evaluation Metrics & Charts -->
+          <div class="dashboard-grid">
+            
+            <!-- Left Side: Scores Summary Card -->
+            <div class="dashboard-card">
+              <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-chart-line" style="color: var(--accent-color);"></i> Overall Assessment Score
+              </h3>
+              
+              <div class="overall-score-box">
+                <div id="dash-score-circle" class="score-circle">
+                  <div id="dash-overall-percent" class="score-circle-inner">80%</div>
+                  <div class="score-circle-label">Correct Answers</div>
+                </div>
+                
+                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; display: flex; gap: 1.5rem; justify-content: center; width: 100%;">
+                  <div><i class="fas fa-check-circle" style="color: var(--success-color);"></i> Correct: <span id="metric-correct" style="font-weight: 700;">8</span></div>
+                  <div><i class="fas fa-times-circle" style="color: var(--error-color);"></i> Wrong: <span id="metric-wrong" style="font-weight: 700;">2</span></div>
+                  <div><i class="fas fa-bullseye" style="color: var(--accent-color);"></i> Accuracy: <span id="metric-accuracy" style="font-weight: 700;">80%</span></div>
+                </div>
+                
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 0.5rem;">Estimated Placement Readiness</div>
+                <div id="dash-readiness-badge" class="readiness-badge ready-service">Ready for Service-Based Companies</div>
+              </div>
+            </div>
+
+            <!-- Right Side: Radar Chart Visualization -->
+            <div class="dashboard-card" style="display: flex; flex-direction: column;">
+              <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-spider" style="color: var(--accent-color);"></i> Skill Gap Analysis Chart
+              </h3>
+              <div style="flex-grow: 1; min-height: 250px; position: relative;">
+                <canvas id="skillGapRadarChart"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Section: Domain-wise Performance Levels -->
+          <div class="dashboard-card" style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-tasks" style="color: var(--accent-color);"></i> Domain-wise Analysis
+            </h3>
+            
+            <div class="category-bars">
+              <!-- Technical -->
+              <div class="cat-bar-item">
+                <div class="cat-bar-header">
+                  <span>Technical & Programming Skills</span>
+                  <span id="bar-tech-val">0%</span>
+                </div>
+                <div class="cat-bar-bg">
+                  <div id="bar-tech-fill" class="cat-bar-fill tech" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Quantitative & Aptitude -->
+              <div class="cat-bar-item">
+                <div class="cat-bar-header">
+                  <span>Quantitative & Logical Aptitude</span>
+                  <span id="bar-apt-val">0%</span>
+                </div>
+                <div class="cat-bar-bg">
+                  <div id="bar-apt-fill" class="cat-bar-fill apt" style="width: 0%"></div>
+                </div>
+              </div>
+
+              <!-- Communication -->
+              <div class="cat-bar-item">
+                <div class="cat-bar-header">
+                  <span>Professional Communication & Business Etiquette</span>
+                  <span id="bar-comm-val">0%</span>
+                </div>
+                <div class="cat-bar-bg">
+                  <div id="bar-comm-fill" class="cat-bar-fill comm" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Skill Gaps and Tag lists -->
+          <div class="dashboard-card" style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1.25rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-brain" style="color: var(--accent-color);"></i> Skill Gaps & Weakness Identifications
+            </h3>
+            
+            <div class="skills-analysis-grid">
+              <div>
+                <h4 style="font-size: 0.95rem; color: var(--success-color); font-weight: 700;"><i class="fas fa-thumbs-up"></i> Strong Areas</h4>
+                <div id="strong-skills-list" class="skills-list">
+                  <!-- JS injected tags -->
+                </div>
+              </div>
+              
+              <div>
+                <h4 style="font-size: 0.95rem; color: var(--error-color); font-weight: 700;"><i class="fas fa-exclamation-triangle"></i> Weak Areas (Needs Improvement)</h4>
+                <div id="weak-skills-list" class="skills-list">
+                  <!-- JS injected tags -->
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+              <h4 style="font-size: 0.95rem; color: var(--warning-color); font-weight: 700; margin-bottom: 0.5rem;"><i class="fas fa-search"></i> Missing Concepts Identified</h4>
+              <div id="missing-skills-list" class="skills-list">
+                <!-- JS injected tags -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Personalized Study Roadmap -->
+          <div class="dashboard-card" style="margin-bottom: 2rem; page-break-before: always;">
+            <h3 style="margin-bottom: 1.5rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-route" style="color: var(--accent-color);"></i> Personalized 4-Week Placement Prep Roadmap
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: -0.75rem; margin-bottom: 1.5rem;">
+              This roadmap has been generated dynamically based on your weaker skill areas and the requirements of your dream placements.
+            </p>
+            
+            <div id="roadmap-timeline" class="timeline">
+              <!-- Timeline node steps will go here -->
+            </div>
+          </div>
+
+          <!-- Section: Prep Resources & Recommended Materials -->
+          <div class="dashboard-card" style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-book-open" style="color: var(--accent-color);"></i> Recommended Materials & Study Resources
+            </h3>
+            
+            <div id="courses-list" class="resources-grid">
+              <!-- Courses go here -->
+            </div>
+
+            <div id="practice-list" class="resources-grid">
+              <!-- Sites go here -->
+            </div>
+          </div>
+
+          <!-- Section: Company Fitment -->
+          <div class="dashboard-card" style="margin-bottom: 2rem; page-break-inside: avoid;">
+            <h3 style="margin-bottom: 1rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-building" style="color: var(--accent-color);"></i> Recommended Recruiting Companies
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: -0.5rem;">
+              Based on your current performance and CGPA standing, these companies match your profile for upcoming campus placements.
+            </p>
+            
+            <div id="recommended-companies-grid" class="companies-grid">
+              <!-- Company cards go here -->
+            </div>
+          </div>
+
+        </div> <!-- /#report-pdf-target -->
+
+        <!-- Section: Detailed Question Review (Excluded from PDF download view) -->
+        <div class="dashboard-card explanation-box" style="margin-bottom: 2rem;">
+          <h3 style="margin-bottom: 1rem; font-size: 1.25rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-question-circle" style="color: var(--accent-color);"></i> Review Questions & Explanations
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: -0.5rem; margin-bottom: 1.5rem;">
+            Go through the detailed solutions and gaps identified for every question in the assessment.
+          </p>
+          
+          <div id="review-explanation-list">
+            <!-- Review items go here -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- VIEW 5: ADMIN ANALYTICS DASHBOARD -->
+      <section id="admin-dashboard-view" class="view-panel">
+        <h2 style="margin-bottom: 0.25rem;">Placement Officer Console</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Overview of student registration metrics, average assessment scores, and training progress</p>
+
+        <!-- KPI Metric stats -->
+        <div class="admin-stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="fas fa-users"></i></div>
+            <div class="stat-info">
+              <h3 id="admin-kpi-total">0</h3>
+              <p>Total Registered</p>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon" style="color: #ec4899; background-color: rgba(236, 72, 153, 0.1);"><i class="fas fa-graduation-cap"></i></div>
+            <div class="stat-info">
+              <h3 id="admin-kpi-cgpa">0.00</h3>
+              <p>Average CGPA</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="color: var(--success-color); background-color: var(--success-light);"><i class="fas fa-clipboard-check"></i></div>
+            <div class="stat-info">
+              <h3 id="admin-kpi-avg-score">0%</h3>
+              <p>Average Test Score</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon" style="color: var(--warning-color); background-color: var(--warning-light);"><i class="fas fa-award"></i></div>
+            <div class="stat-info">
+              <h3 id="admin-kpi-success">0%</h3>
+              <p>Success Rate (&gt;=70%)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Charts Grid -->
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3 style="margin-bottom: 1.25rem; font-size: 1.1rem;"><i class="fas fa-chart-pie" style="color: var(--accent-color);"></i> Branch-wise Registrations</h3>
+            <div style="height: 250px; position: relative;">
+              <canvas id="branchDistributionChart"></canvas>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3 style="margin-bottom: 1.25rem; font-size: 1.1rem;"><i class="fas fa-chart-bar" style="color: var(--accent-color);"></i> Placement Readiness Status</h3>
+            <div style="height: 250px; position: relative;">
+              <canvas id="readinessDistributionChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Records Table -->
+        <div class="dashboard-card">
+          <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;"><i class="fas fa-database" style="color: var(--accent-color);"></i> Student Placement Records</h3>
+          <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Complete list of students registered, current scores, and company readiness reports.</p>
+          
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Student Info</th>
+                  <th>Branch</th>
+                  <th>CGPA</th>
+                  <th>Dream Company</th>
+                  <th>Test Score</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="student-table-body">
+                <!-- Dynamically filled by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Copyright -->
+    <footer style="text-align: center; padding: 2rem; border-top: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.8rem; margin-top: auto; background-color: var(--bg-secondary);">
+      &copy; 2026 PrepMentor AI. All rights reserved. Designed for College Placement Preparation.
+    </footer>
+  </div>
+
+  <!-- Load script files sequentially -->
+  <script src="questions.js"></script>
+  <script src="analytics.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
